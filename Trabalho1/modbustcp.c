@@ -7,7 +7,7 @@
 
 // CLIENTE !!!! 
 
-int Send_Modbus_request (int fd, char* APDU, char* APDU_R) {
+int Send_Modbus_Request (int fd, char* APDU, char* APDU_R) {
 	
 	int r=(rand() % 65000),lenght_h=0,lenght_l=0,i,test=0;
 	char PDU[253],PDU_R[253];
