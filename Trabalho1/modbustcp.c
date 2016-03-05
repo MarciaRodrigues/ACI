@@ -9,11 +9,14 @@
 
 int Send_Modbus_Request (int fd, char* APDU, char* APDU_R) {
 	
-	int r=(rand() % 65000),lenght_h=0,lenght_l=0,i,test=0;
+	int r=(rand() % 65000),lenght_h=0,lenght_l=0,i=0,test=0;
 	char PDU[253],PDU_R[253];
 	
 	lenght_h=(sizeof(PDU[6]+PDU[7]+PDU[8]+PDU[9]+PDU[10]+PDU[11]))/256;
 	lenght_l=(sizeof(PDU[6]+PDU[7]+PDU[8]+PDU[9]+PDU[10]+PDU[11]))%256;
+	
+	printf("\n%d \n",lenght_h);
+	printf("%d \n\n",lenght_l);
 	
 	PDU[0]= (unsigned char) (r/256);
 	PDU[1]= (unsigned char) (r%256);
@@ -28,21 +31,25 @@ int Send_Modbus_Request (int fd, char* APDU, char* APDU_R) {
 	PDU[10]= APDU[3];
 	PDU[11]= APDU[4];
 	
-	for(i=0;i++;i<12){	
-		printf("PDU[%d]= %s\n",i,PDU[i]);
+	
+	
+	printf("Estou dentro do Send_Modbus_Request \n");
+	for(i=0;i<12;i++){	
+	printf("PDU[%d]= %c\n",i,PDU[i]);
 	}
 	
 	test=write(fd,PDU,strlen(PDU)+1,0);
 	if(test<0){
-		printf("ERRO\n");
+		printf("\nERRO1\n");
 		return -1;
 	}
 	
 	test=read(fd,PDU_R,sizeof(PDU_R),0);
 	if(test<0){
-		printf("ERRO\n");
+		printf("\nERRO2\n");
 		return -1;
 	}
+	return 1;
 }
 
 // SERVIDOR !!!! 
