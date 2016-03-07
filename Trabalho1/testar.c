@@ -4,17 +4,17 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-<<<<<<< HEAD
+
 #include "modbustcp.h" 
 #include <unistd.h>
-=======
+
 // #include "modbustcp.h"
->>>>>>> origin/master
+
 
 void main(){
 	char fd=0, teste=0;
 	char APDU[1000],APDU_R[1000];
-<<<<<<< HEAD
+
 	int fd=1000,teste=0, nAPDU=5;
 	
 	/* Debug */
@@ -53,19 +53,18 @@ void main(){
 		
 		
 	}
-=======
+
 	
 	Send_Modbus_Request(fd,&APDU,&APDU_R);
 	
 	printf("%d\n",APDU);
 	printf("%d\n",APDU_R);
->>>>>>> origin/master
+
 }
 
 
 
-<<<<<<< HEAD
-=======
+
 
 int Send_Modbus_Request (int fd, char* APDU, char* APDU_R) {
 	
@@ -105,4 +104,4 @@ int Send_Modbus_Request (int fd, char* APDU, char* APDU_R) {
 	} */
 	
 }
->>>>>>> origin/master
+
