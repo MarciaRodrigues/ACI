@@ -8,11 +8,19 @@
 // CLIENTE !!!! 
 int Send_Modbus_Request (int fd, char* APDU, int nAPDU, char* APDU_R) {
 	
+<<<<<<< HEAD
 	int r=0,lenght_h=0,lenght_l=0,i=0,test=0;
 	time_t t;
 	char PDU[253],PDU_R[253];
 	srand((unsigned) time(&t)); // inicializar o tempo para o rand
 	r=(rand()%65000);
+=======
+	int r=(rand() % 65000),lenght_h=0,lenght_l=0,i,test=0;
+	char PDU[253],PDU_R[253];
+	
+	lenght_h=(sizeof(PDU[6]+PDU[7]+PDU[8]+PDU[9]+PDU[10]+PDU[11]))/256;
+	lenght_l=(sizeof(PDU[6]+PDU[7]+PDU[8]+PDU[9]+PDU[10]+PDU[11]))%256;
+>>>>>>> origin/master
 	
 	PDU[0]= (unsigned char) (r/256);
 	PDU[1]= (unsigned char) (r%256);
@@ -26,24 +34,37 @@ int Send_Modbus_Request (int fd, char* APDU, int nAPDU, char* APDU_R) {
 	PDU[9]= APDU[2];
 	PDU[10]= APDU[3];
 	PDU[11]= APDU[4];
+<<<<<<< HEAD
 
 	printf("\n Estou dentro do Send_Modbus_Request \n\n"); // debug
 	for(i=0;i<12;i++){	
 	printf("PDU[%d]= %c\n",i,PDU[i]);// debug
+=======
+	
+	for(i=0;i++;i<12){	
+		printf("PDU[%d]= %s\n",i,PDU[i]);
+>>>>>>> origin/master
 	}
 	
 	test=write(fd,PDU,strlen(PDU)+1);
 	if(test<0){
+<<<<<<< HEAD
 		printf("\n ERRO1\n");
+=======
+		printf("ERRO\n");
+>>>>>>> origin/master
 		return -1;
 	}
 	
 	test=read(fd,PDU_R,sizeof(PDU_R));
 	if(test<0){
+<<<<<<< HEAD
 		printf("\n ERRO2\n");
+=======
+		printf("ERRO\n");
+>>>>>>> origin/master
 		return -1;
 	}
-	return 1;
 }
 
 // SERVIDOR !!!! 
