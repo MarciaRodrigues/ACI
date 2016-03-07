@@ -6,47 +6,41 @@
 #include <sys/socket.h>
 
 // CLIENTE !!!! 
-
-int Send_Modbus_Request (int fd, char* APDU, char* APDU_R) {
+int Send_Modbus_Request (int fd, char* APDU, int nAPDU, char* APDU_R) {
 	
-	int r=(rand() % 65000),lenght_h=0,lenght_l=0,i=0,test=0;
+	int r=0,lenght_h=0,lenght_l=0,i=0,test=0;
+	time_t t;
 	char PDU[253],PDU_R[253];
-	
-	lenght_h=(sizeof(PDU[6]+PDU[7]+PDU[8]+PDU[9]+PDU[10]+PDU[11]))/256;
-	lenght_l=(sizeof(PDU[6]+PDU[7]+PDU[8]+PDU[9]+PDU[10]+PDU[11]))%256;
-	
-	printf("\n%d \n",lenght_h);
-	printf("%d \n\n",lenght_l);
+	srand((unsigned) time(&t)); // inicializar o tempo para o rand
+	r=(rand()%65000);
 	
 	PDU[0]= (unsigned char) (r/256);
 	PDU[1]= (unsigned char) (r%256);
 	PDU[2]= 0;
 	PDU[3]= 0;
-	PDU[4]= lenght_h;
-	PDU[5]= lenght_l;
+	PDU[4]= (unsigned char)((nAPDU+1)/256); //nAPDU e o tamanho do APDU e adicionamos um por causa do PDU[6] *ver capitulo livro*
+	PDU[5]= (unsigned char)((nAPDU+1)%256);
 	PDU[6]= 1;
 	PDU[7]= APDU[0];
 	PDU[8]= APDU[1];
 	PDU[9]= APDU[2];
 	PDU[10]= APDU[3];
 	PDU[11]= APDU[4];
-	
-	
-	
-	printf("Estou dentro do Send_Modbus_Request \n");
+
+	printf("\n Estou dentro do Send_Modbus_Request \n\n"); // debug
 	for(i=0;i<12;i++){	
-	printf("PDU[%d]= %c\n",i,PDU[i]);
+	printf("PDU[%d]= %c\n",i,PDU[i]);// debug
 	}
 	
-	test=write(fd,PDU,strlen(PDU)+1,0);
+	test=write(fd,PDU,strlen(PDU)+1);
 	if(test<0){
-		printf("\nERRO1\n");
+		printf("\n ERRO1\n");
 		return -1;
 	}
 	
-	test=read(fd,PDU_R,sizeof(PDU_R),0);
+	test=read(fd,PDU_R,sizeof(PDU_R));
 	if(test<0){
-		printf("\nERRO2\n");
+		printf("\n ERRO2\n");
 		return -1;
 	}
 	return 1;
