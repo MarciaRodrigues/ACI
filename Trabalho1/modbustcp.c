@@ -4,19 +4,17 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include "readandwrite.h"
+
 
 // CLIENTE !!!! 
 int Send_Modbus_Request (int fd, char* APDU, int nAPDU, char* APDU_R) {
 	
-
-	int r=0,lenght_h=0,lenght_l=0,i=0,test=0;
+	int r=0,i=0;
 	time_t t;
 	char PDU[253],PDU_R[253];
 	srand((unsigned) time(&t)); // inicializar o tempo para o rand
 	r=(rand()%65000);
-
-	int r=(rand() % 65000),lenght_h=0,lenght_l=0,i,test=0;
-	char PDU[253],PDU_R[253];
 	
 	PDU[0]= (unsigned char) (r/256);
 	PDU[1]= (unsigned char) (r%256);
@@ -30,42 +28,27 @@ int Send_Modbus_Request (int fd, char* APDU, int nAPDU, char* APDU_R) {
 	PDU[9]= APDU[2];
 	PDU[10]= APDU[3];
 	PDU[11]= APDU[4];
-
-
+	
 	printf("\n Estou dentro do Send_Modbus_Request \n\n"); // debug
+	
 	for(i=0;i<12;i++){	
 	printf("PDU[%d]= %c\n",i,PDU[i]);// debug
-
-	
-	for(i=0;i++;i<12){	
-		printf("PDU[%d]= %s\n",i,PDU[i]);
-
 	}
-	
-	test=write(fd,PDU,strlen(PDU)+1);
-	if(test<0){
-
+	if((write(fd,PDU,strlen(PDU)+1))<0){
 		printf("\n ERRO1\n");
 
-		printf("ERRO\n");
-
+		return -1;
+	}
+	if((read(fd,PDU_R,sizeof(PDU_R)))<0){
+		printf("\n ERRO2\n");
 		return -1;
 	}
 	
-	test=read(fd,PDU_R,sizeof(PDU_R));
-	if(test<0){
-
-		printf("\n ERRO2\n");
-
-		printf("ERRO\n");
-
-		return -1;
-	}
 }
 
 // SERVIDOR !!!! 
 
-int Receive_Modbus_request (int fd, char* APDU_P, int* TI) {
+int Receive_Modbus_Request (int fd, char* APDU_P, int nAPDU_P, int* TI) {
 	
 	if(sizeof(APDU_P)<5){
 		printf("ERRO\n");
@@ -75,13 +58,12 @@ int Receive_Modbus_request (int fd, char* APDU_P, int* TI) {
 	char PDU[253];
 	int i,test=0;
 	
-	test=read(fd,PDU,sizeof(PDU),0);
-	if(test<0){
+	if((read(fd,PDU,sizeof(PDU)))<0){
 		printf("ERRO");
 		return -1;
 	}
-	
-	TI=(PDU[0]*256)+PDU[1];
+
+	*TI=(PDU[0]*256)+PDU[1];
 	
 	for(i=0;i++;i<5){	
 		APDU_P[i]=PDU[i+7];
@@ -90,7 +72,8 @@ int Receive_Modbus_request (int fd, char* APDU_P, int* TI) {
 	return 1;
 }
 
-int Send_Modbus_response (int fd, char* APDU_R, int nAPDU_R int TI) {
+int Send_Modbus_Response (int fd, char* APDU_R, int nAPDU_R, int TI) {
+	
 	time_t t;
 	srand((unsigned) time(&t)); // inicializar o tempo para o rand
 	
@@ -111,14 +94,12 @@ int Send_Modbus_response (int fd, char* APDU_R, int nAPDU_R int TI) {
 	PDU[11]= APDU_R[4];
 	
 	for(i=0;i++;i<12){	
-		printf("PDU[%d]= %s\n",i,PDU[i]);
+		printf("PDU[%d]= %s\n",i,PDU[i]); // debug
 	}
-	
-	test=write(fd,PDU,strlen(PDU)+1,0);	
-	if(test<0){
+
+	if((write(fd,PDU,strlen(PDU)+1))<0){
 		printf("ERRO");
 		return -1;
 	}
 	return 1;
 }
-
