@@ -52,22 +52,71 @@ int cDisconnect (int fd){
 	
 }
 
-int Write_multiple_coils (int fd, int st_c, int n_c, char *val){
+int Write_multiple_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsigned char *val){
 	
+	unsigned char *APDU, *APDU_R;
+	unsigned short N, Req;
+	
+	// Calculate total bytes
+	N = ceil(nCoils/8.0);
+
+	APDU = new unsigned char[N+6];
+
+	// Function Code
+	APDU[0] = '15';
+
+	// Start Address
+	APDU[1] = (unsigned char) (startAddress/256);
+	APDU[2] = (unsigned char) (startAddress%256);
+
+	// Number of Coils
+	APDU[3] = (unsigned char) (nCoils/256);
+	APDU[4] = (unsigned char) (nCoils%256);
+
+	// Byte Count
+	APDU[5] = N;
+
+	// Coil Values
+	for (int i = 0; i < N; i++)
+		APDU[i+6] = coilValues[i];
+
+	APDU_R = new unsigned char[5];
+	
+	for(nAPDU=0;nAPDU<=nCoils;nAPDU++){
+		APDU[nAPDU]=val[nAPDU];
+	}
+
+	// Send Request
+	Req = Send_Modbus_Request(fd, APDU, nAPDU, &APDU_R);
+
+	if (Req < 0){ 
+		printf("erro");
+		return -1;
+	}
+		
+	if (APDU_R[0] == 0x8F){ 
+		printf("erro");
+		return -1;
+	}
+
+	return N;
+	
+	
+	/*
 	int smr=0,nAPDU;
 	char* APDU[253],APDU_R[253];
 	
 	APDU[0]= '15'; // porque e write multiple coils
 	
-	APDU[1]= (unsigned char) (st_c/256);
-	APDU[2]= (unsigned char) (st_c%256);
+	APDU[1]= (unsigned char) (startAddress/256);
+	APDU[2]= (unsigned char) (startAddress%256);
 	
-	APDU[1]= (unsigned char) (n_c/256);
-	APDU[2]= (unsigned char) (n_c%256);
+	APDU[1]= (unsigned char) (nCoils/256);
+	APDU[2]= (unsigned char) (nCoils%256);
 	
 	APDU[3]= '3';
 	
-	for(nAPDU=0;nAPDU<=n_c;nAPDU++){
+	for(nAPDU=0;nAPDU<=nCoils;nAPDU++){
 		APDU[nAPDU]=val[nAPDU];
 	}
 	
@@ -82,13 +131,15 @@ int Write_multiple_coils (int fd, int st_c, int n_c, char *val){
 		return n_c;
 	}
 	
+	*/
+	
 }
 
 int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsigned char **val){
 	
 	
 	unsigned char *APDU, *APDU_R;
-	unsigned short N, mReq;
+	unsigned short N, Req;
 
 	PDU = new unsigned char[5];
 
@@ -108,14 +159,14 @@ int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsi
 
 	APDU_R = new unsigned char[N+2];
 
-	mReq = sendModbusRequest(fd, APDU, nAPDU, &APDU_R);
+	Req = Send_Modbus_Request(fd, APDU, nAPDU, &APDU_R);
 	
-	if (mReq < 0) {
+	if (Req < 0) {
 		printf("erro");
 		return -1;
 	}
 	
-	if (PDU_R[0] == 0x81){
+	if (APDU_R[0] == 0x81){
 		printf("erro");
 		return -1;
 	}
@@ -131,8 +182,6 @@ int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsi
 	
 	
 	
-	
-	///// FAZER!!!!!!!
 	/*
 	if(n_c>0){
 		printf("ERRO!!");
