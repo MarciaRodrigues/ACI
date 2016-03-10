@@ -4,20 +4,20 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include "readandwrite.h"
-
+#include <fcntl.h>
+#include <unistd.h>
 
 // CLIENTE !!!! 
-int Send_Modbus_Request (int fd, char* APDU, int nAPDU, char* APDU_R) {
+int Send_Modbus_Request (int fd, char* APDU, unsigned short nAPDU, unsigned char* APDU_R) {
 	
-	int r=0,i=0;
+	int r=0,i=0,random=0,w=0;
 	time_t t;
 	char PDU[253],PDU_R[253];
 	srand((unsigned) time(&t)); // inicializar o tempo para o rand
-	r=(rand()%65000);
+	random=(rand()%65000);
 	
-	PDU[0]= (unsigned char) (r/256);
-	PDU[1]= (unsigned char) (r%256);
+	PDU[0]= (unsigned char) (random/256);
+	PDU[1]= (unsigned char) (random%256);
 	PDU[2]= 0;
 	PDU[3]= 0;
 	PDU[4]= (unsigned char)((nAPDU+1)/256); //nAPDU e o tamanho do APDU e adicionamos um por causa do PDU[6] *ver capitulo livro*
@@ -34,21 +34,30 @@ int Send_Modbus_Request (int fd, char* APDU, int nAPDU, char* APDU_R) {
 	for(i=0;i<12;i++){	
 	printf("PDU[%d]= %c\n",i,PDU[i]);// debug
 	}
-	if((write(fd,PDU,strlen(PDU)+1))<0){
+	w=(write(fd,PDU,strlen(PDU)+1));
+	r=(read(fd,&PDU_R,sizeof(PDU_R)));
+	
+	if((w<0)||(w!=(strlen(PDU)+1))){ // testa se o valor retornado e igual ao numero de coils que efectivamente escreveu
 		printf("\n ERRO1\n");
 
 		return -1;
 	}
-	if((read(fd,PDU_R,sizeof(PDU_R)))<0){
+	else if((r<0)||(r!=sizeof(PDU_R))){ // testa se o valor retornado pela funçao e igual ao numero de coils que efectivamente leu
 		printf("\n ERRO2\n");
 		return -1;
 	}
+	
+	for(i=0;i<253;i++){
+		APDU_R[i]=PDU_R[i]; // preenche APDU_R
+	}
+	
+	
 	
 }
 
 // SERVIDOR !!!! 
 
-int Receive_Modbus_Request (int fd, char* APDU_P, int nAPDU_P, int* TI) {
+int Receive_Modbus_Request (int fd, char* APDU_P, unsigned short nAPDU_P, int* TI) {
 	
 	if(sizeof(APDU_P)<5){
 		printf("ERRO\n");
@@ -72,7 +81,7 @@ int Receive_Modbus_Request (int fd, char* APDU_P, int nAPDU_P, int* TI) {
 	return 1;
 }
 
-int Send_Modbus_Response (int fd, char* APDU_R, int nAPDU_R, int TI) {
+int Send_Modbus_Response (int fd, char* APDU_R, unsigned short nAPDU_R, int TI) {
 	
 	time_t t;
 	srand((unsigned) time(&t)); // inicializar o tempo para o rand

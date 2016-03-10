@@ -6,6 +6,9 @@
 #include <unistd.h>
 #include "modbustcp.h"
 #include <arpa/inet.h>
+#include <math.h>  
+
+
 
 int cConnect (int server_add, int port){
 	
@@ -61,7 +64,7 @@ int Write_multiple_coils (int fd, unsigned short startAddress, unsigned short nC
 	N = ceil(nCoils/8.0);
 
 	// Function Code
-	APDU[0] = '15';
+	APDU[0] = 15;
 
 	// Start Address
 	APDU[1] = (unsigned char) (startAddress/256);
@@ -78,8 +81,6 @@ int Write_multiple_coils (int fd, unsigned short startAddress, unsigned short nC
 	for (int i = 0; i < N; i++){
 		APDU[i+6] = val[i];
 	}
-
-	APDU_R = new unsigned char[5];
 	
 	nAPDU = N+6;
 
@@ -100,11 +101,11 @@ int Write_multiple_coils (int fd, unsigned short startAddress, unsigned short nC
 	
 }
 
-int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsigned char **val){
+int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsigned char *val){
 	
 	
 	unsigned char APDU[253], APDU_R[253];
-	unsigned short N, Req;
+	unsigned short N, Req, nAPDU;
 
 	// Function Code
 	APDU[0] = 1;
@@ -134,13 +135,12 @@ int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsi
 		printf("erro");
 		return -1;
 	}
-		
 
 	// Write Coil Values
-	*val = new unsigned char[N];
+	//*val = new unsigned char[N];
 	
 	for (int i = 0; i < N; i++){
-		(*val)[i] = APDU_R[i+2];
+		val[i] = APDU_R[i];
 	}
 	
 	return N;
@@ -158,7 +158,8 @@ int Request_handler(int fd) {
 	char APDU_P[253];
 	int nAPDU_R=25;
 	int rmr;
-	rmr = Receive_Modbus_Request(fd, &APDU_P, &TI);
+	unsigned short nAPDU;
+	rmr = Receive_Modbus_Request(fd, &APDU_P, nAPDU, &TI);
 	if (rmr==0)
 	{
 		printf("error");
