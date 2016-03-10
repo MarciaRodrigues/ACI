@@ -20,20 +20,22 @@ int cConnect (int server_add, int port){
 	bzero( &addr ,sizeof(addr));
 	
 	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	
+	inet_aton("172.30.82.236", &addr.sin_addr); // store IP in antelope
+	
 	addr.sin_port = port;
-		
+	
 	Sclient=socket(PF_INET,SOCK_STREAM,0);
 	
 	if(Sclient<0) {
 		printf("ERRO ao criar socket");
 		return -1;
 	}
-		
+	printf("Vou fazer connect agora!\n\n");
 	Cclient= connect(Sclient, (struct sockaddr*) & addr, sizeof (addr));
-	
+	printf("Fiz Connect!\n\n");
 	if(Cclient<0) {
-		printf("ERRO ao conectar ao servidor");
+		printf("ERRO ao conectar ao servidor\n\n");
 		return -1;
 	}
 	printf("\n\nConnectado!!\n\n");
@@ -158,8 +160,7 @@ int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsi
 	char APDU_R[253];
 	unsigned short nAPDU,nAPDU_R=25;
 	rmr = Receive_Modbus_Request(fd, APDU_P, nAPDU, &TI);
-	if (rmr==0)
-	{
+	if (rmr==0) {
 		printf("error");
 	}
 	
@@ -189,6 +190,7 @@ int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsi
 	}
 }
 */
+
 int sConnect(int port) {
 	
 	int fd, cli_size, s2;		//socket
