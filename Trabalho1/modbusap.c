@@ -85,7 +85,7 @@ int Write_multiple_coils (int fd, unsigned short startAddress, unsigned short nC
 	nAPDU = N+6;
 
 	// Send Request
-	Req = Send_Modbus_Request(fd, APDU, nAPDU, &APDU_R);
+	Req = Send_Modbus_Request(fd, APDU, nAPDU, APDU_R);
 
 	if (Req < 0){ 
 		printf("erro");
@@ -124,7 +124,7 @@ int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsi
 	// Byte Count
 	APDU[5] = N;
 	
-	Req = Send_Modbus_Request(fd, APDU, nAPDU, &APDU_R);
+	Req = Send_Modbus_Request(fd, APDU, nAPDU, APDU_R);
 	
 	if (Req < 0) {
 		printf("erro");
@@ -152,33 +152,31 @@ int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsi
 
 //SERVIDOR
 
-int Request_handler(int fd) {
+/* int Request_handler(int fd) {
 	
-	int TI;
-	char APDU_P[253];
-	int nAPDU_R=25;
-	int rmr;
-	unsigned short nAPDU;
-	rmr = Receive_Modbus_Request(fd, &APDU_P, nAPDU, &TI);
+	int TI,rmr;
+	char APDU_R[253];
+	unsigned short nAPDU,nAPDU_R=25;
+	rmr = Receive_Modbus_Request(fd, APDU_P, nAPDU, &TI);
 	if (rmr==0)
 	{
 		printf("error");
 	}
 	
-	if(APDU_P[0]=='15')
+	if(APDU_P[0]==15)
 	{
 		int st_c, nc;
 		char val[4];
-		st_c = (APDU_P[1]+APDU_P[2]/10)*256;
-		nc = (APDU_P[3]+APDU_P[4]/10)*256;
-		val[0]=APDU_P[6];
-		val[1]=APDU_P[7];
-		val[2]=APDU_P[8];
-		val[3]=APDU_P[9];
+		st_c = (APDU_R[1]+APDU_R[2]/10)*256;
+		nc = (APDU_R[3]+APDU_R[4]/10)*256;
+		val[0]=APDU_R[6];
+		val[1]=APDU_R[7];
+		val[2]=APDU_R[8];
+		val[3]=APDU_R[9];
 		// W_coils(st_c,nc, val);			//falta implementar
 		
 		char APDU_R[5];
-		APDU_R[0]='15';
+		APDU_R[0]=15;
 		APDU_R[1]=APDU_P[1];
 		APDU_R[2]=APDU_P[2];
 		APDU_R[3]= APDU_P[3];
@@ -186,11 +184,11 @@ int Request_handler(int fd) {
 		
 	
 		int smr;
-		smr= Send_Modbus_Response(fd, nAPDU_R, APDU_R, &TI);
+		smr= Send_Modbus_Response(fd, nAPDU_R, APDU_R, TI);
 		return 0;
 	}
 }
-
+*/
 int sConnect(int port) {
 	
 	int fd, cli_size, s2;		//socket

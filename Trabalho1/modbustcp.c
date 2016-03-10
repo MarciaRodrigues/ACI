@@ -12,7 +12,7 @@ int Send_Modbus_Request (int fd, char* APDU, unsigned short nAPDU, unsigned char
 	
 	int r=0,i=0,random=0,w=0;
 	time_t t;
-	char PDU[253],PDU_R[253];
+	char PDU[260],PDU_R[260];
 	srand((unsigned) time(&t)); // inicializar o tempo para o rand
 	random=(rand()%65000);
 	
@@ -34,15 +34,15 @@ int Send_Modbus_Request (int fd, char* APDU, unsigned short nAPDU, unsigned char
 	for(i=0;i<12;i++){	
 	printf("PDU[%d]= %c\n",i,PDU[i]);// debug
 	}
-	w=(write(fd,PDU,strlen(PDU)+1));
-	r=(read(fd,&PDU_R,sizeof(PDU_R)));
+	w=(write(fd,PDU,nAPDU+7));
+	r=(read(fd,PDU_R,sizeof(PDU_R)));
 	
-	if((w<0)||(w!=(strlen(PDU)+1))){ // testa se o valor retornado e igual ao numero de coils que efectivamente escreveu
+	if(w<0){ // testa se o valor retornado e igual ao numero de coils que efectivamente escreveu
 		printf("\n ERRO1\n");
 
 		return -1;
 	}
-	else if((r<0)||(r!=sizeof(PDU_R))){ // testa se o valor retornado pela funçao e igual ao numero de coils que efectivamente leu
+	else if(r<0){ // testa se o valor retornado pela funçao e igual ao numero de coils que efectivamente leu
 		printf("\n ERRO2\n");
 		return -1;
 	}
