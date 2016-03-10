@@ -96,12 +96,12 @@ int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsi
 	APDU[0] = 1;
 
 	// Start Address
-	APDU[1] = (startAddress >> 8) & 0xFF;
-	APDU[2] = startAddress & 0xFF;
+	APDU[1] = (unsigned char) (startAddress/256);
+	APDU[2] = (unsigned char) (startAddress%256);
 
 	// Number of Coils
-	APDU[3] = (nCoils >> 8) & 0xFF;
-	APDU[4] = nCoils & 0xFF;
+	APDU[3] = (unsigned char) (nCoils/256);
+	APDU[4] = (unsigned char) (nCoils%256);
 
 	// Calcule response maximum size
 	N = ceil(nCoils/8.0);
@@ -121,7 +121,6 @@ int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsi
 	}
 		
 
-	
 	// Write Coil Values
 	*coilValues = new unsigned char[N];
 	
