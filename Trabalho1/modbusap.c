@@ -84,7 +84,54 @@ int Write_multiple_coils (int fd, int st_c, int n_c, char *val){
 	
 }
 
-int Read_coils (int fd, int st_c, int n_c, char *val){
+int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsigned char **val){
+	
+	
+	unsigned char *APDU, *APDU_R;
+	unsigned short N, mReq;
+
+	PDU = new unsigned char[5];
+
+	// Function Code
+	APDU[0] = 1;
+
+	// Start Address
+	APDU[1] = (startAddress >> 8) & 0xFF;
+	APDU[2] = startAddress & 0xFF;
+
+	// Number of Coils
+	APDU[3] = (nCoils >> 8) & 0xFF;
+	APDU[4] = nCoils & 0xFF;
+
+	// Calcule response maximum size
+	N = ceil(nCoils/8.0);
+
+	APDU_R = new unsigned char[N+2];
+
+	mReq = sendModbusRequest(fd, APDU, nAPDU, &APDU_R);
+	
+	if (mReq < 0) {
+		printf("erro");
+		return -1;
+	}
+	
+	if (PDU_R[0] == 0x81){
+		printf("erro");
+		return -1;
+	}
+		
+
+	
+	// Write Coil Values
+	*coilValues = new unsigned char[N];
+	
+	for (int i = 0; i < N; i++)
+		(*coilValues)[i] = PDU_R[i+2];
+
+	return N;
+	
+	
+	
 	
 	///// FAZER!!!!!!!
 	/*
