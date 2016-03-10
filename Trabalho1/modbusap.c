@@ -21,7 +21,9 @@ int cConnect (int server_add, int port){
 	
 	addr.sin_family = AF_INET;
 	
-	inet_aton("192.168.0.104", &addr.sin_addr); // store IP in antelope
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	
+	// inet_aton("192.168.0.104", &addr.sin_addr); // store IP in addr
 	
 	addr.sin_port = port;
 	
