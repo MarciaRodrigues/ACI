@@ -21,7 +21,7 @@ int cConnect (int server_add, int port){
 	
 	addr.sin_family = AF_INET;
 	
-	inet_aton("172.30.82.236", &addr.sin_addr); // store IP in antelope
+	inet_aton("192.168.0.104", &addr.sin_addr); // store IP in antelope
 	
 	addr.sin_port = port;
 	
@@ -31,14 +31,16 @@ int cConnect (int server_add, int port){
 		printf("ERRO ao criar socket");
 		return -1;
 	}
-	printf("Vou fazer connect agora!\n\n");
+	
+	printf("\n Connecting...\n\n");
+	
 	Cclient= connect(Sclient, (struct sockaddr*) & addr, sizeof (addr));
-	printf("Fiz Connect!\n\n");
+	
 	if(Cclient<0) {
-		printf("ERRO ao conectar ao servidor\n\n");
+		printf(" ERRO ao conectar ao servidor\n\n");
 		return -1;
 	}
-	printf("\n\nConnectado!!\n\n");
+	printf("\n\n Connectado!!\n\n");
 	return Cclient;
 	
 }

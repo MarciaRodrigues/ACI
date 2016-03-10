@@ -23,7 +23,11 @@ void main(){
 	APDU[2]='A';
 	APDU[3]='!';
 	APDU[4]='?';
+	
+	system("clear");
+	
 	printf("\n O que pretende fazer?\n\n Correr funçoes?(y)\n Exit(n) \n\n");
+	
 	while(1){
 		
 		scanf("%c", &x);
@@ -34,17 +38,18 @@ void main(){
 		}
 		if (x=='y')
 		{
-			printf("\n Vou fazer connect!\n\n");
+			
 			fd=cConnect(inet_addr("127.0.0.1"),522);
-			printf("Proximo teste?\n\n");
-			if(teste==-1)
+			
+			if(fd==-1)
 			{
-				printf("\n Erro no Send_Modbus_Request \n");
+				printf("\n Erro ao connectar \n");
 				break;
 			}
-			else if(teste==1)
+			else if(fd==1)
 			{
-				printf("\n Send_Modbus_Request correcto \n");
+				printf("\n Connected \n");
+				printf("\n Proximo teste?\n\n");
 			}
 		}
 		else
