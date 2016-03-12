@@ -21,11 +21,11 @@ int cConnect (int server_add, int port){
 	
 	addr.sin_family = AF_INET;
 	
-	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	// addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	
-	// inet_aton("192.168.0.104", &addr.sin_addr); // store IP in addr
+	inet_aton("192.168.0.104", &addr.sin_addr); // store IP in addr
 	
-	addr.sin_port = port;
+	addr.sin_port = htons(port);
 	
 	Sclient=socket(PF_INET,SOCK_STREAM,0);
 	
