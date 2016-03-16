@@ -17,6 +17,14 @@ int cConnect (int server_add, int port){
 	char receive[100];
 	struct sockaddr_in addr;
 	
+	Sclient = socket(PF_INET, SOCK_STREAM, 0);
+
+	if (Sclient < 0) 
+		{
+		printf("ERRO ao criar socket");
+		return -1;
+	}
+	
 	bzero( &addr ,sizeof(addr));
 	
 	addr.sin_family = AF_INET;
@@ -28,11 +36,7 @@ int cConnect (int server_add, int port){
 	addr.sin_port = htons(port);
 	
 	Sclient=socket(PF_INET,SOCK_STREAM,0);
-	
-	if(Sclient<0) {
-		printf("ERRO ao criar socket");
-		return -1;
-	}
+
 	
 	printf("\n Connecting...\n\n");
 	
@@ -160,11 +164,13 @@ int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsi
 
 /* int Request_handler(int fd) {
 	
-	int TI,rmr;
+	int TI,Req;
 	char APDU_R[253];
 	unsigned short nAPDU,nAPDU_R=25;
-	rmr = Receive_Modbus_Request(fd, APDU_P, nAPDU, &TI);
-	if (rmr==0) {
+	
+	Req = Send_Modbus_Request(fd, APDU, nAPDU, APDU_R);;
+	
+	if (Req==0) {
 		printf("error");
 	}
 	
@@ -178,7 +184,7 @@ int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsi
 		val[1]=APDU_R[7];
 		val[2]=APDU_R[8];
 		val[3]=APDU_R[9];
-		// W_coils(st_c,nc, val);			//falta implementar
+		W_coils(st_c, n_c, val);			
 		
 		char APDU_R[5];
 		APDU_R[0]=15;
@@ -188,16 +194,21 @@ int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsi
 		APDU_R[4]=APDU_P[4];
 		
 	
-		int smr;
-		smr= Send_Modbus_Response(fd, nAPDU_R, APDU_R, TI);
+		int Send;
+		Send = Send_Modbus_Response(fd, nAPDU_R, APDU_R, TI);
 		return 0;
 	}
+	
+		else {
+			R_coils(st_c, n_c, val);		
+		}
 }
 */
 
 int sConnect(int port) {
 	
-	int fd, cli_size, s2;		//socket
+	//socket
+	int fd, cli_size, s2;		
 	fd = socket(PF_INET, SOCK_STREAM, 0);
 	
 	// definir estrutura do socket
@@ -221,4 +232,19 @@ int sConnect(int port) {
 	s2 = accept(fd, (struct sockaddr *) &cli_laddr, &cli_size);
 	
 	return fd;
+}
+
+
+int sDisconnect (int fd){
+
+	if (close(fd)<0)
+	{
+		printf("error close");
+		return -1;
+	}
+	else
+	{
+		return 0;
+	}
+	
 }
