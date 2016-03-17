@@ -8,34 +8,39 @@
 #include <unistd.h>
 
 // CLIENTE !!!! 
-int Send_Modbus_Request (int fd, char* APDU, unsigned short nAPDU, unsigned char* APDU_R) {
+int Send_Modbus_Request (int fd, unsigned char* APDU, unsigned short nAPDU, unsigned char* APDU_R) {
 	
-	int r=0,i=0,random=0,w=0;
+	int r=0,i,random=0,w=0;
 	time_t t;
-	char PDU[260],PDU_R[260];
+	unsigned char PDU[260],PDU_R[260];
 	srand((unsigned) time(&t)); // inicializar o tempo para o rand
 	random=(rand()%65000);
+	
 	
 	PDU[0]= (unsigned char) (random/256);
 	PDU[1]= (unsigned char) (random%256);
 	PDU[2]= 0;
 	PDU[3]= 0;
-	PDU[4]= (unsigned char)((nAPDU+1)/256); //nAPDU e o tamanho do APDU e adicionamos um por causa do PDU[6] *ver capitulo livro*
+	PDU[4]= (unsigned char)((nAPDU+1)/256); //nAPDU é o tamanho do APDU e adicionamos um por causa do PDU[6] *ver capitulo livro*
 	PDU[5]= (unsigned char)((nAPDU+1)%256);
 	PDU[6]= 1;
-	PDU[7]= APDU[0];
-	PDU[8]= APDU[1];
-	PDU[9]= APDU[2];
-	PDU[10]= APDU[3];
-	PDU[11]= APDU[4];
+	
+	for ( i = 0; i < nAPDU; i++){
+		PDU[i+7] = APDU[i];
+	}
+	
+	for ( i = 0; i < nAPDU+7; i++){
+		printf("PDU[%d]= %02x\n",i,PDU[i]);
+	}
 	
 	printf("\n Estou dentro do Send_Modbus_Request \n\n"); // debug
 	
-	for(i=0;i<12;i++){	
-	printf("PDU[%d]= %c\n",i,PDU[i]);// debug
-	}
+	printf("PDU[%d]= %c\n",nAPDU+8,PDU[nAPDU+8]);
+	
 	w=(write(fd,PDU,nAPDU+7));
+	printf("\n Fiz write \n\n");
 	r=(read(fd,PDU_R,sizeof(PDU_R)));
+	printf("\n Fiz read \n\n");
 	
 	if(w<0){ // testa se o valor retornado e igual ao numero de coils que efectivamente escreveu
 		printf("\n ERRO1\n");

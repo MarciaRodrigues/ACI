@@ -31,7 +31,7 @@ int cConnect (int server_add, int port){
 	
 	// addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	
-	inet_aton("192.168.0.104", &addr.sin_addr); // store IP in addr
+	inet_aton("127.0.0.1", &addr.sin_addr); // store IP in addr
 	
 	addr.sin_port = htons(port);
 	
@@ -69,10 +69,17 @@ int Write_multiple_coils (int fd, unsigned short startAddress, unsigned short nC
 	
 	unsigned char APDU[253], APDU_R[253];
 	unsigned short N, Req, nAPDU;
+	int i;
+	
 	
 	// Calculate total bytes
-	N = ceil(nCoils/8.0);
-
+	N = nCoils/8;
+	
+	if((nCoils%8)>0){
+		N++;
+	}
+	
+	
 	// Function Code
 	APDU[0] = 15;
 
@@ -88,12 +95,20 @@ int Write_multiple_coils (int fd, unsigned short startAddress, unsigned short nC
 	APDU[5] = N;
 
 	// Coil Values
-	for (int i = 0; i < N; i++){
+	for ( i = 0; i < N; i++){
 		APDU[i+6] = val[i];
 	}
 	
+	for ( i = 0; i < N+6; i++){
+		printf("APDU[%d]= %c\n",i,APDU[i]);
+	
+	}
+	
+	
+	printf("\n");
 	nAPDU = N+6;
-
+	
+	
 	// Send Request
 	Req = Send_Modbus_Request(fd, APDU, nAPDU, APDU_R);
 
@@ -107,7 +122,7 @@ int Write_multiple_coils (int fd, unsigned short startAddress, unsigned short nC
 		return -1;
 	}
 
-	return N;
+	return nAPDU;
 	
 }
 
@@ -116,7 +131,8 @@ int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsi
 	
 	unsigned char APDU[253], APDU_R[253];
 	unsigned short N, Req, nAPDU;
-
+	int i;
+	
 	// Function Code
 	APDU[0] = 1;
 
@@ -149,7 +165,7 @@ int Read_coils (int fd, unsigned short startAddress, unsigned short nCoils, unsi
 	// Write Coil Values
 	//*val = new unsigned char[N];
 	
-	for (int i = 0; i < N; i++){
+	for (i = 0; i < N; i++){
 		val[i] = APDU_R[i];
 	}
 	

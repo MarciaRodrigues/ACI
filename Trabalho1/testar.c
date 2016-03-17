@@ -14,7 +14,8 @@ void main(){
 	char x;
 	char APDU[255],APDU_R[255];
 
-	int fd=0,teste=0, nAPDU=5;
+	int fd=0,teste=0, nAPDU=5, wmc;
+	
 	
 	/* Debug */
 	
@@ -27,6 +28,7 @@ void main(){
 	system("clear");
 	
 	printf("\n O que pretende fazer?\n\n Correr funçoes?(y)\n Exit(n) \n\n");
+	
 	
 	while(1){
 		
@@ -51,6 +53,9 @@ void main(){
 				printf("\n Connected \n");
 				printf("\n Proximo teste?\n\n");
 			}
+			printf("\n Vou escrever \n");
+			wmc=Write_multiple_coils (fd, 1, 8*5, APDU);
+			printf("\n Foi escrito \n");
 		}
 		else
 		{
