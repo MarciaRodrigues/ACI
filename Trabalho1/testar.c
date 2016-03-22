@@ -47,8 +47,8 @@ void main(){
 				printf("\n Erro ao connectar \n");
 				break;
 			}
-			getchar();
-			getchar();
+			//getchar();
+			//getchar();
 			wmc=Write_multiple_coils (fd, 1, 8*5, APDU);
 			printf("\n Foi escrito \n");
 		}

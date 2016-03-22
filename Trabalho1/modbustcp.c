@@ -35,13 +35,17 @@ int Send_Modbus_Request (int fd, unsigned char* APDU, unsigned short nAPDU, unsi
 		printf("PDU[%d]= %02x\n",i,PDU[i]);
 	}
 		
-	// printf("PDU[%d]= %c\n",nAPDU+8,PDU[nAPDU+8]);
+	//printf("PDU[%d]= %02x\n",nAPDU+8,PDU[nAPDU+8]);
 	
-	w=(write(fd,PDU,nAPDU+7));
-	// printf("\n Fiz write \n");
+	w=send(fd,PDU,nAPDU+7,0);
+	printf("\n Fiz write \n");
 	
-	r=(read(fd,PDU_R,sizeof(PDU_R)));
-	// printf("\n Fiz read \n");
+	r=recv(fd,PDU_R,sizeof(PDU_R),0);
+	printf("\n Fiz read \n");
+	
+	for(i=0;i<nAPDU+7;i++){
+		printf("PDU_R[%d]= %02x\n",i,PDU_R[i]);
+	}
 	
 	if(w<0){ // testa se o valor retornado e igual ao numero de coils que efectivamente escreveu
 		printf("\n ERRO1\n");
@@ -53,13 +57,15 @@ int Send_Modbus_Request (int fd, unsigned char* APDU, unsigned short nAPDU, unsi
 		return -1;
 	}
 	
-	for(i=0;i<253;i++){
+	for(i=0;i<18;i++){
 		APDU_R[i]=PDU_R[i]; // preenche APDU_R
 	}
 	
-	for(i=0;i<10;i++){
-		printf("PDU[%d]= %02x\n",i,PDU_R[i]);
-	}
+	/*for(i=0;i<18;i++){
+		printf("APDU_R[%d]= %d\n",i,APDU_R[i]);
+	}*/
+	
+	
 	
 	
 	return 1;

@@ -27,17 +27,14 @@ int cConnect (int server_add, int port){
 	
 	bzero( &addr ,sizeof(addr));
 	
+	//inet_aton("127.0.0.1", &addr.sin_addr); // store IP in addr
+	
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	addr.sin_family = AF_INET;
-	
-	// addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	
-	inet_aton("127.0.0.1", &addr.sin_addr); // store IP in addr
-	
 	addr.sin_port = htons(port);
 	
 	Sclient=socket(PF_INET,SOCK_STREAM,0);
 
-	
 	printf("\n Connecting...\n");
 	
 	Cclient= connect(Sclient, (struct sockaddr*) & addr, sizeof (addr));
@@ -47,7 +44,10 @@ int cConnect (int server_add, int port){
 		return -1;
 	}
 	printf("\n Connectado!!\n\n");
-	return Cclient;
+	
+	printf("fd = %d\n ", Sclient);
+	
+	return Sclient;
 	
 }
 
@@ -100,12 +100,13 @@ int Write_multiple_coils (int fd, unsigned short startAddress, unsigned short nC
 	}
 	
 	for ( i = 0; i < N+6; i++){
-		//printf("APDU[%d]= %c\n",i,APDU[i]);
-	
+		printf("APDU[%d]= %02x\n",i,APDU[i]);
 	}
 	
+	printf("\n",i,APDU[i]); 
 	
 	nAPDU = N+6;
+	
 	
 	
 	// Send Request
