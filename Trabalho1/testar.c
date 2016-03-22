@@ -14,7 +14,7 @@ void main(){
 	char x;
 	char APDU[255],APDU_R[255];
 
-	int fd=0,teste=0, nAPDU=5, wmc;
+	int fd=0,teste=0, nAPDU=5, wmc,i;
 	
 	
 	/* Debug */
@@ -41,19 +41,14 @@ void main(){
 		if (x=='y')
 		{
 			
-			fd=cConnect(inet_addr("127.0.0.1"),522);
-			
+			fd=cConnect(inet_addr("127.0.0.1"),502);
 			if(fd==-1)
 			{
 				printf("\n Erro ao connectar \n");
 				break;
 			}
-			else if(fd==1)
-			{
-				printf("\n Connected \n");
-				printf("\n Proximo teste?\n\n");
-			}
-			printf("\n Vou escrever \n");
+			getchar();
+			getchar();
 			wmc=Write_multiple_coils (fd, 1, 8*5, APDU);
 			printf("\n Foi escrito \n");
 		}

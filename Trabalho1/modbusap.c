@@ -38,7 +38,7 @@ int cConnect (int server_add, int port){
 	Sclient=socket(PF_INET,SOCK_STREAM,0);
 
 	
-	printf("\n Connecting...\n\n");
+	printf("\n Connecting...\n");
 	
 	Cclient= connect(Sclient, (struct sockaddr*) & addr, sizeof (addr));
 	
@@ -46,7 +46,7 @@ int cConnect (int server_add, int port){
 		printf(" ERRO ao conectar ao servidor\n\n");
 		return -1;
 	}
-	printf("\n\n Connectado!!\n\n");
+	printf("\n Connectado!!\n\n");
 	return Cclient;
 	
 }
@@ -100,12 +100,11 @@ int Write_multiple_coils (int fd, unsigned short startAddress, unsigned short nC
 	}
 	
 	for ( i = 0; i < N+6; i++){
-		printf("APDU[%d]= %c\n",i,APDU[i]);
+		//printf("APDU[%d]= %c\n",i,APDU[i]);
 	
 	}
 	
 	
-	printf("\n");
 	nAPDU = N+6;
 	
 	
@@ -249,7 +248,6 @@ int sConnect(int port) {
 	
 	return fd;
 }
-
 
 int sDisconnect (int fd){
 
